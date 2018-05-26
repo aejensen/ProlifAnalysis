@@ -26,7 +26,7 @@ spline.slope <- function(fit) {
   eF <- approxfun(fit$data$x, fit$estimate)
   vF <- approxfun(fit$data$x, fit$velocity)
 
-  vMax <- optimize(aF, interval=range(fit$data$x), maximum=TRUE)
+  vMax <- optimize(vF, interval=range(fit$data$x), maximum=TRUE)
 
   time <- vMax$maximum
   slope <- vMax$objective
