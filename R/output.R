@@ -60,8 +60,7 @@ plot.ProlifAnalysis <- function(object, type = "confluency", ...) {
          xlab="Elapsed [hours]", ylab="Confluency [%]")
 
     #Plot estimated relationship
-    estimate.l5 <- l5(object$d$x, object$coef)
-    lines(object$d$x, estimate.l5, lwd=3, col=1)
+    lines(object$d$x, l5.func(object$d$x, object$coef), lwd=3, col=1)
 
     #Plot slope
     points(object$slope$time, object$slope$value, pch=15, col=2, cex=2)
