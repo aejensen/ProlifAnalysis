@@ -18,4 +18,5 @@ summary(out)
 plot(out)
 plot(out, type="velocity")
 plot(out, type="acceleration")
+plot(out, type="residuals")
 ```
