@@ -70,6 +70,27 @@ estimateL5 <- function(x, y, var = "robust", conf.level = 0.95, B = 10^4, seed =
               CI = CI,
               conf.level = conf.level,
               var = var)
-  class(out) <- append(class(out), "ProlifAnalysis")
+  class(out) <- append(class(out), "ProlifAnalysisL5")
   out
 }
+
+
+estimateSpline <- function(x, y, kSeq = 5:30) {
+  #Estimate spline model
+  est <- spline.fit(x, y, kSeq)
+
+  slope <- spline.slope(est)
+
+  out <- list(data = est$data,
+              estimate = est$estimate,
+              velocity = est$velocity,
+              acceleration = est$acceleration,
+              residuals = est$residuals,
+              BICvalues = est$BICvalues,
+              kOpt = est$kOpt,
+              slope = slope)
+
+  class(out) <- append(class(out), "ProlifAnalysisSpline")
+  out
+}
+

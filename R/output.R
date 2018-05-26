@@ -1,4 +1,4 @@
-summary.ProlifAnalysis <- function(object, ...) {
+summary.ProlifAnalysisL5 <- function(object, ...) {
   cat("Proliferation analysis - 5 parameter logistic model\n\n")
 
   cat("Model: y(x) = c + (d - c) / ((1 + exp(b * (x - e)))^f) + epsilon\n")
@@ -45,12 +45,25 @@ summary.ProlifAnalysis <- function(object, ...) {
   invisible(object)
 }
 
-print.ProlifAnalysis <- function(x, ...) {
+print.ProlifAnalysisL5 <- function(x, ...) {
   summary(x)
 }
 
 
-plot.ProlifAnalysis <- function(object, type = "confluency", ...) {
+summary.ProlifAnalysisSpline <- function(object, ...) {
+  cat("Nothing to see here yet\n")
+  invisible(object)
+}
+
+print.ProlifAnalysisSpline <- function(x, ...) {
+  summary(x)
+}
+
+
+
+
+
+plot.ProlifAnalysisL5 <- function(object, type = "confluency", ...) {
   if(!(type == "confluency" | type == "velocity" | type == "acceleration" | type == "residuals")) {
     stop("type must be either confluency, velocity, acceleration or residuals")
   }
@@ -66,6 +79,9 @@ plot.ProlifAnalysis <- function(object, type = "confluency", ...) {
     points(object$slope$time, object$slope$value, pch=15, col=2, cex=2)
     lines(rep(object$slope$time, 2), c(0, object$slope$value), lty=2, col=2)
     lines(c(0, object$slope$time), rep(object$slope$value, 2), lty=2, col=2)
+    #Add the tangent line at the slope
+    tangentLine <- function(t) (object$slope$value - object$slope$slope * object$slope$time) + object$slope$slope * t
+    curve(tangentLine(x), min(object$d$x), max(object$d$x), add=TRUE, col=2)
 
     #Plot lagtime
     points(object$lagtime.lin$time, object$lagtime.lin$value, pch=15, col=1, cex=2)
@@ -102,3 +118,67 @@ plot.ProlifAnalysis <- function(object, type = "confluency", ...) {
   }
   invisible(object)
 }
+
+
+
+
+
+
+
+plot.ProlifAnalysisSpline <- function(object, type = "confluency", ...) {
+  if(!(type == "confluency" | type == "velocity" | type == "acceleration" | type == "residuals")) {
+    stop("type must be either confluency, velocity, acceleration or residuals")
+  }
+
+  if(type == "confluency") {
+    plot(y ~ x, object$d, ylim=c(0,100), bty="n", pch=20, col="gray50",
+         xlab="Elapsed [hours]", ylab="Confluency [%]")
+
+    #Plot estimated relationship
+    lines(object$d$x, object$estimate, lwd=3, col=1)
+
+    #Plot slope
+    #points(object$slope$time, object$slope$value, pch=15, col=2, cex=2)
+    #lines(rep(object$slope$time, 2), c(0, object$slope$value), lty=2, col=2)
+    #lines(c(0, object$slope$time), rep(object$slope$value, 2), lty=2, col=2)
+    #Add the tangent line at the slope
+    #tangentLine <- function(t) (object$slope$value - object$slope$slope * object$slope$time) + object$slope$slope * t
+    #curve(tangentLine(x), min(object$d$x), max(object$d$x), add=TRUE, col=2)
+
+    #Plot lagtime
+    #points(object$lagtime.lin$time, object$lagtime.lin$value, pch=15, col=1, cex=2)
+    #lines(rep(object$lagtime.lin$time, 2), c(0, object$lagtime.lin$value), lty=2, col=1)
+    #lines(c(0, object$lagtime.lin$time), rep(object$lagtime.lin$value, 2), lty=2, col=1)
+
+    legend("topleft", c("Slope", "Lagtime"), col=c(2,1), pch=15, cex=1, bty="n")
+  }
+
+  if(type == "velocity") {
+    plot(object$d$x, object$velocity, lwd=2, bty="n", type="l",
+         xlab="Elapsed [hours]", ylab="Velocity [%/hour]")
+
+    #Plot slope
+    points(object$slope$time, object$slope$slope, pch=15, col=1, cex=2)
+    lines(rep(object$slope$time, 2), c(0, object$slope$slope), lty=2)
+    lines(c(0, object$slope$time), rep(object$slope$slope, 2), lty=2)
+  }
+
+  if(type == "acceleration") {
+    plot(object$d$x, object$acceleration, lwd=2, bty="n", type="l",
+         xlab="Elapsed [hours]", ylab="Acceleration [%/hour^2]")
+    abline(h = 0, lty=2)
+  }
+
+  if(type == "residuals") {
+    plot(object$d$x, object$residuals, pch=20, bty="n",
+         xlab="Elapsed [hours]", ylab="Standardised residuals",
+         ylim=c(-ceiling(max(object$residuals)), ceiling(max(object$residuals))))
+    abline(h = 0, lty=2)
+    abline(h = -1.96, lty=3)
+    abline(h = 1.96, lty=3)
+    lines(lowess(object$d$x, object$residuals), lwd=2)
+  }
+
+  invisible(object)
+}
+
