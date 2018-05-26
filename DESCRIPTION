@@ -13,3 +13,6 @@ Imports:
     drc,
     mvtnorm,
     sandwich
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
