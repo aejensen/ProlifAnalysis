@@ -4,7 +4,8 @@ l5.fit <- function(x, y) {
   list(coef = coef(m),
        vcov = vcov(m),
        vcov.robust = sandwich::sandwich(m),
-       df.residual = stats::df.residual(m))
+       df.residual = stats::df.residual(m),
+       residuals = residuals(m, type="standardised"))
 }
 
 l5.func <- function(x, par) {

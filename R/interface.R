@@ -60,6 +60,7 @@ estimateL5 <- function(x, y, var = "robust", conf.level = 0.95, B = 10^4, seed =
 
   #Gather the results
   out <- list(data = data.frame(x = x, y = y),
+              residuals = est$residuals,
               coef = coef,
               vcov = vcov,
               vcovR = vcovR,

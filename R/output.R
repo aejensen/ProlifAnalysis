@@ -51,8 +51,8 @@ print.ProlifAnalysis <- function(x, ...) {
 
 
 plot.ProlifAnalysis <- function(object, type = "confluency", ...) {
-  if(!(type == "confluency" | type == "velocity" | type == "acceleration")) {
-    stop("type must be either confluency, velocity or acceleration")
+  if(!(type == "confluency" | type == "velocity" | type == "acceleration" | type == "residuals")) {
+    stop("type must be either confluency, velocity, acceleration or residuals")
   }
 
   if(type == "confluency") {
@@ -91,5 +91,14 @@ plot.ProlifAnalysis <- function(object, type = "confluency", ...) {
     abline(h = 0, lty=2)
   }
 
+  if(type == "residuals") {
+    plot(object$d$x, object$residuals, pch=20, bty="n",
+         xlab="Elapsed [hours]", ylab="Standardised residuals",
+         ylim=c(-ceiling(max(object$residuals)), ceiling(max(object$residuals))))
+    abline(h = 0, lty=2)
+    abline(h = -1.96, lty=3)
+    abline(h = 1.96, lty=3)
+    lines(lowess(object$d$x, object$residuals), lwd=2)
+  }
   invisible(object)
 }
