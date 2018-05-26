@@ -7,7 +7,7 @@ l5.fit <- function(x, y) {
        df.residual = stats::df.residual(m))
 }
 
-l5 <- function(x, par) {
+l5.func <- function(x, par) {
   #5-parameter logistic function
   b <- par[1]
   c <- par[2]
@@ -52,7 +52,7 @@ l5.slope <- function(par) {
 
   time <- e + log(1/f) / b
   slope <- b * (c-d) * (1 + 1/f)^(-1-f)
-  value <- l5(time, par)
+  value <- l5.func(time, par)
 
   list(time = as.numeric(time),
        value = as.numeric(value),
@@ -67,7 +67,7 @@ getSlopeAtZero <- function(par) {
   f <- par[5]
 
   slope <- b*(c-d)*exp(-b*e)*(1+exp(-b*e))^(-1-f)*f
-  value <- l5(0, par)
+  value <- l5.func(0, par)
 
   list(time = 0,
        value = as.numeric(value),
@@ -83,7 +83,7 @@ l5.lag.lin <- function(par) {
   f2 <- function(t) slopeAtZero$value + 0 * t
   time <- stats::uniroot(function(x) f1(x) - f2(x), c(0, 150))$root
 
-  value <- l5(time, par)
+  value <- l5.func(time, par)
 
   list(time = as.numeric(time),
        value = as.numeric(value))
