@@ -9,11 +9,12 @@ Description: More about what it does (maybe more than one line)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: drc, mvtnorm, sandwich
+Depends: drc, mvtnorm, sandwich, scam
 Imports:
     drc,
     mvtnorm,
-    sandwich
+    sandwich,
+    scam
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
