@@ -1,7 +1,7 @@
 # ProlifAnalysis
-Development version of the R package ProlifAnalysis for analysis of stem cell proliferation
+Development version of the R package ProlifAnalysis for non-linear analysis of stem cell proliferation curves.
 
-To install the development version of TruncComp run the following commands from within R
+To install the development version of ProlifAnalysis run the following commands from within R:
 
 ```{r}
 library(devtools)
@@ -20,6 +20,7 @@ plot(mL5)
 plot(mL5, type="velocity")
 plot(mL5, type="acceleration")
 ```
+
 # Running the shiny APP!
 ```{r}
 library(ProlifAnalysis)
