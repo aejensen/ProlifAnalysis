@@ -26,8 +26,10 @@ estimateL5 <- function(x, y, var = "robust", conf.level = 0.95, B = 10^4, seed =
   rownames(coefCI) <- c("b", "c", "d", "e", "f")
 
   #Get summary statistics
-  slope <- l5.slope(coef)
-  lag.lin <- l5.lag.lin(coef)
+  slope <- l5.maxSlope(coef)
+  lagtime.lin <- l5.lagtime.linear(coef)
+  lagtime.acc <- l5.lagtime.acceleration(coef)
+  timeTo100 <- l5.timeTo100(est$coef)
 
   #Calculate standard confidence intervals for summary statistics
   set.seed(seed)
@@ -37,12 +39,18 @@ estimateL5 <- function(x, y, var = "robust", conf.level = 0.95, B = 10^4, seed =
     rand <- mvtnorm::rmvnorm(B, coef, vcov)
   }
 
-  simSlopeTime <- apply(rand, 1, function(x) l5.slope(x)$time)
-  simSlopeSlope <- apply(rand, 1, function(x) l5.slope(x)$slope)
-  simSlopeValue <- apply(rand, 1, function(x) l5.slope(x)$value)
+  simSlopeTime <- apply(rand, 1, function(x) l5.maxSlope(x)$time)
+  simSlopeSlope <- apply(rand, 1, function(x) l5.maxSlope(x)$slope)
+  simSlopeValue <- apply(rand, 1, function(x) l5.maxSlope(x)$value)
 
-  simLagLinTime <- apply(rand, 1, function(x) l5.lag.lin(x)$time)
-  simLagLinValue <- apply(rand, 1, function(x) l5.lag.lin(x)$value)
+  simLagLinTime <- apply(rand, 1, function(x) l5.lagtime.linear(x)$time)
+  simLagLinValue <- apply(rand, 1, function(x) l5.lagtime.linear(x)$value)
+
+  simLagAccTime <- apply(rand, 1, function(x) l5.lagtime.acceleration(x)$time)
+  simLagAccValue <- apply(rand, 1, function(x) l5.lagtime.acceleration(x)$value)
+
+  simTimeTo100Time <- apply(rand, 1, function(x) l5.timeTo100(x)$time)
+  simTimeTo100Value <- apply(rand, 1, function(x) l5.timeTo100(x)$value)
 
   qLU <- c((1-conf.level)/2, 1-(1-conf.level)/2)
   simSlopeTimeCI <- quantile(simSlopeTime, qLU)
@@ -52,11 +60,21 @@ estimateL5 <- function(x, y, var = "robust", conf.level = 0.95, B = 10^4, seed =
   simLagLinTimeCI <- quantile(simLagLinTime, qLU)
   simLagLinValueCI <- quantile(simLagLinValue, qLU)
 
+  simLagAccTimeCI <- quantile(simLagAccTime, qLU)
+  simLagAccValueCI <- quantile(simLagAccValue, qLU)
+
+  simTimeTo100TimeCI <- quantile(simTimeTo100Time, qLU)
+  simTimeTo100ValueCI <- quantile(simTimeTo100Value, qLU)
+
   CI <- list(slope.time = simSlopeTimeCI,
              slope.slope = simSlopeSlopeCI,
              slope.value = simSlopeValueCI,
              lagtime.lin = simLagLinTimeCI,
-             lagvalue.lin = simLagLinValueCI)
+             lagvalue.lin = simLagLinValueCI,
+             lagtime.acc = simLagAccTimeCI,
+             lagvalue.acc = simLagAccValueCI,
+             timeTo100.time = simTimeTo100TimeCI,
+             timeTo100.value = simTimeTo100ValueCI)
 
   #Gather the results
   out <- list(data = data.frame(x = x, y = y),
@@ -66,31 +84,17 @@ estimateL5 <- function(x, y, var = "robust", conf.level = 0.95, B = 10^4, seed =
               vcovR = vcovR,
               coefCI = coefCI,
               slope = slope,
-              lagtime.lin = lag.lin,
+              lagtime.lin = lagtime.lin,
+              lagtime.acc = lagtime.acc,
+              timeTo100 = timeTo100,
+              lin1Func = l5.lin1Func(coef),
+              lin2Func = l5.lin2Func(coef),
               CI = CI,
               conf.level = conf.level,
               var = var)
+
   class(out) <- append(class(out), "ProlifAnalysisL5")
-  out
-}
 
-
-estimateSpline <- function(x, y, kSeq = 5:30) {
-  #Estimate spline model
-  est <- spline.fit(x, y, kSeq)
-
-  slope <- spline.slope(est)
-
-  out <- list(data = est$data,
-              estimate = est$estimate,
-              velocity = est$velocity,
-              acceleration = est$acceleration,
-              residuals = est$residuals,
-              BICvalues = est$BICvalues,
-              kOpt = est$kOpt,
-              slope = slope)
-
-  class(out) <- append(class(out), "ProlifAnalysisSpline")
   out
 }
 
