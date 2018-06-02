@@ -16,13 +16,13 @@ data(confluencyExample)
 mL5 <- estimateL5(confluencyExample$x, confluencyExample$y)
 summary(mL5)
 
-mSpline <- estimateSpline(confluencyExample$x, confluencyExample$y)
-
-par(mfrow=c(2,3))
 plot(mL5)
 plot(mL5, type="velocity")
 plot(mL5, type="acceleration")
-plot(mSpline)
-plot(mSpline, type="velocity")
-plot(mSpline, type="acceleration")
+```
+# Running the shiny APP!
+```{r}
+library(ProlifAnalysis)
+
+runShinyProliferation()
 ```
